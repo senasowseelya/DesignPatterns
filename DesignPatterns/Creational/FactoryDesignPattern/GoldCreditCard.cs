@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DesignPatterns.Creational.FactoryDesignPattern
+{
+    internal class GoldCreditCard : ICreditCard
+    {
+        public int GetAnnualCharge()
+        {
+            return 1500;
+        }
+
+        public string GetCardType()
+        {
+            return "Gold";
+        }
+
+        public int GetCreditLimit()
+        {
+            return 35000;
+        }
+
+        public int GetGoldMembershipPrice()
+        {
+            return 25000;
+        }
+    }
+}
