@@ -1,5 +1,7 @@
-﻿using DesignPatterns.Behavioural.Iterator;
+﻿using DesignPatterns.Behavioural.ChainOfResponsibility;
+using DesignPatterns.Behavioural.Iterator;
 using DesignPatterns.Behavioural.Observer;
+using DesignPatterns.Behavioural.State;
 using DesignPatterns.Creational.AbstractFactoryDesignPattern;
 using DesignPatterns.Creational.BuilderDesignPattern;
 using DesignPatterns.Creational.FactoryDesignPattern;
@@ -21,7 +23,7 @@ namespace DesignPatterns
     {
         public static async Task Main(string[] args)
         {
-            TestObserver();
+           
         }
         public static void TestSingletonPattern()
         {
@@ -309,7 +311,6 @@ namespace DesignPatterns
             proxy1.ReadWriteToSharedFolder();
 
         }
-
         public static void TestIterator()
         {
           
@@ -327,7 +328,6 @@ namespace DesignPatterns
             }
            
         }
-
         public static void TestObserver() {
             IObserver observer1 = new ConcreteObserver() { Id=1};
             IObserver observer2 = new ConcreteObserver() { Id=2};
@@ -342,6 +342,27 @@ namespace DesignPatterns
             subject.RemoveObserver(observer1);
             subject.UpdateProductAvailabilty();
             
+
+        }
+        public static void TestChainOfResponsibility() {
+            Chain chain = new Chain();
+            chain.Withdraw(2500);
+            chain.Withdraw(2600);
+        }
+        public static void TestState()
+        {
+            ATMMachine machine = new ATMMachine();
+            machine.EnterPin();
+            machine.EjectDebitCard();
+            machine.InsertDebitCard();
+            machine.Withdraw();
+            machine.EjectDebitCard();
+            Console.WriteLine("correct pattern");
+            machine.InsertDebitCard();
+            machine.EnterPin();
+            machine.Withdraw();
+            machine.EjectDebitCard();
+
 
         }
     }
