@@ -1,7 +1,14 @@
 ﻿using DesignPatterns.Behavioural.ChainOfResponsibility;
+using DesignPatterns.Behavioural.Command;
+using DesignPatterns.Behavioural.Interpreter;
 using DesignPatterns.Behavioural.Iterator;
+using DesignPatterns.Behavioural.Mediator;
+using DesignPatterns.Behavioural.Memento;
 using DesignPatterns.Behavioural.Observer;
+using DesignPatterns.Behavioural.Startegy;
 using DesignPatterns.Behavioural.State;
+using DesignPatterns.Behavioural.TemplateMethod;
+using DesignPatterns.Behavioural.Visitor;
 using DesignPatterns.Creational.AbstractFactoryDesignPattern;
 using DesignPatterns.Creational.BuilderDesignPattern;
 using DesignPatterns.Creational.FactoryDesignPattern;
@@ -23,7 +30,7 @@ namespace DesignPatterns
     {
         public static async Task Main(string[] args)
         {
-           
+            TestMemento();
         }
         public static void TestSingletonPattern()
         {
@@ -313,38 +320,41 @@ namespace DesignPatterns
         }
         public static void TestIterator()
         {
-          
+
             PlayListAggregate playListAggr = new PlayListAggregate();
 
-            playListAggr.AddSong(new Song { Id = 1, Name = "ABC" });  
-            playListAggr.AddSong(new Song { Id = 1, Name = "ABClkj" });  
-            playListAggr.AddSong(new Song { Id = 1, Name = "jk" });  
-            playListAggr.AddSong(new Song { Id = 1, Name = "kjjs" });  
-            playListAggr.AddSong(new Song { Id = 1, Name = "ooo" });  
+            playListAggr.AddSong(new Song { Id = 1, Name = "ABC" });
+            playListAggr.AddSong(new Song { Id = 1, Name = "ABClkj" });
+            playListAggr.AddSong(new Song { Id = 1, Name = "jk" });
+            playListAggr.AddSong(new Song { Id = 1, Name = "kjjs" });
+            playListAggr.AddSong(new Song { Id = 1, Name = "ooo" });
             Song song = null;
             IIterator<Song> iterator = playListAggr.CreateIterator();
-            while (iterator.HasNext()) {
+            while (iterator.HasNext())
+            {
                 Console.WriteLine(iterator.Next());
             }
-           
-        }
-        public static void TestObserver() {
-            IObserver observer1 = new ConcreteObserver() { Id=1};
-            IObserver observer2 = new ConcreteObserver() { Id=2};
-            IObserver observer3 = new ConcreteObserver() { Id=3};
-            IObserver observer4= new ConcreteObserver() { Id=4};
 
-            ConcreteSubject subject = new ConcreteSubject(new Product { Id=1,Name="Phone",State=ProductState.SoldOut});
+        }
+        public static void TestObserver()
+        {
+            IObserver observer1 = new ConcreteObserver() { Id = 1 };
+            IObserver observer2 = new ConcreteObserver() { Id = 2 };
+            IObserver observer3 = new ConcreteObserver() { Id = 3 };
+            IObserver observer4 = new ConcreteObserver() { Id = 4 };
+
+            ConcreteSubject subject = new ConcreteSubject(new Product { Id = 1, Name = "Phone", State = ProductState.SoldOut });
             subject.AddObserver(observer1);
             subject.AddObserver(observer2);
-            subject.AddObserver(observer3); 
+            subject.AddObserver(observer3);
             subject.AddObserver(observer4);
             subject.RemoveObserver(observer1);
             subject.UpdateProductAvailabilty();
-            
+
 
         }
-        public static void TestChainOfResponsibility() {
+        public static void TestChainOfResponsibility()
+        {
             Chain chain = new Chain();
             chain.Withdraw(2500);
             chain.Withdraw(2600);
@@ -362,6 +372,82 @@ namespace DesignPatterns
             machine.EnterPin();
             machine.Withdraw();
             machine.EjectDebitCard();
+
+
+        }
+        public static void TestTemplateMethod()
+        {
+            BuildHouseTemplate template = new ConcreteHouse();
+            template.Build();
+            BuildHouseTemplate woodTemplate = new WoodHouse();
+            woodTemplate.Build();
+        }
+        public static void TestCommand()
+        {
+            Document document = new Document();
+            ICommand openCommand = new OpenCommand(document);
+            ICommand closeCommand = new CloseCommand(document);
+            ICommand saveCommand = new SaveCommand(document);
+            MenuOptionsInvoker menuOptions = new MenuOptionsInvoker(openCommand, saveCommand, closeCommand);
+            menuOptions.OpenDocument();
+            menuOptions.SaveDocument();
+            menuOptions.CloseDocument();
+        }
+        public static void TestVisitor()
+        {
+            School school = new School();
+            IVisitor doctor = new Doctor();
+            school.PerformOperation(doctor);
+            IVisitor salesMan = new SalesMan();
+            school.PerformOperation(salesMan);
+
+        }
+        public static void TestStrategy()
+        {
+            CompressionContext cntx = new CompressionContext(new ZipCompression());
+            cntx.CreateCompressedFolder("ABC");
+            //here without creating a new object like this we pass different strategy to exiisting object
+            //cntx = new CompressionContext(new RarCompression());
+            cntx.SetStrategy(new RarCompression());
+            cntx.CreateCompressedFolder("DEF");
+        }
+
+        public static void TestMediator() 
+        {
+            IGroup whatsappGroup = new WhatsappGroup();
+            User user = new User { Name="Sena"};
+            User user1 = new User{ Name="Sita"};
+            User user2 = new User{ Name="Suma"};
+
+            whatsappGroup.Register(user);
+            whatsappGroup.Register(user1);
+            whatsappGroup.Register(user2);
+            //Object1 invokes send operation which internally calls send operation from mediator.
+            user.SendMessage("Hi All");
+        
+        }
+
+        public static void TestInterpreter()
+        {
+            var rule = new AndExpression(new EqualsExpression("department", "IT"), new GreaterThanExpression("experience", 2));
+            var employee = new Dictionary<string, dynamic> {
+                {"department","IT" },
+                {"experience",3 }
+            };
+            Console.WriteLine(rule.Interpret(employee));
+        }
+        public static void TestMemento()
+        {
+            Article article = new Article();
+            MementoHistory history = new MementoHistory();  
+            article.Title = "Title";
+            article.Content = "Content";
+            history.Save(article);
+            article.Content += "New Content Added ";
+            //The above change is not needed,so restore the version. 
+            ArticleMemento previousVersion = history.GetLatestVersion();
+            article.Restore(previousVersion);
+            Console.WriteLine(article.Content);
 
 
         }
